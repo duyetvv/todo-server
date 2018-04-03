@@ -2,7 +2,9 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const connection = require('./connection');
+const Connection = require('./connection');
+
+const con = new Connection()
 
 const app = express();
 
@@ -12,51 +14,43 @@ app.use(bodyParser.json());
 
 const router = express.Router();
 
-let data = [
-  { id: 0, name: 'duyet', status: true },
-  { id: 1, name: 'duyet1', status: false }
-];
-
-router.get('/', (req, res) => {
-
-})
-
 router.route('/todos')
   .post((req, res) => {
     const todo = req.body;
-    let result = { error: 1, msg: 'Add error' };
 
     if (todo) {
-      data.push(todo);
-      result = todo;
+      con.insertOne(todo).then(result => {
+        res.json(result);
+      }).catch(error => {
+        res.json({ error: 1, msg: 'Add error' })
+      });
     }
-
-    res.json(result);
   })
   .get((req, res) => {
-    res.json(data);
+    con.getALl().then(todos => {
+      res.json(todos);
+    })
+    .catch(error => {
+      res.json([]);
+    })
   });
 
 router.route('/todos/:id')
-.delete((req, res) => {
-  console.log(req.params.id)
-  const index = data.findIndex(ele => ele.id === parseInt(req.params.id));
-  let result = {
-    status: 0,
-    msg: `Can\'t delete the todo with id = ${req.params.id}`
-  }
-  console.log(index)
-  if (index !== -1) {
-    data.splice(index, 1);
-    result = {
-      status: 1,
-      msg: `Removed the todo with id = ${req.params.id}`
-    }
-  }
+  .delete((req, res) => {
+    const id = req.params.id;
 
-  console.log(data.length);
-  res.json(result);
-});
+    con.deleteOne(id).then(result => {
+      res.json(result);
+    })
+    .catch(error => {
+      res.json({ error: 1, msg: 'Add error' })
+    })
+  })
+  .post((req, res) => {
+    const id = req.params.id;
+
+
+  })
 
 app.use('/api', router);
 
