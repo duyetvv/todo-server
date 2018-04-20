@@ -45,7 +45,7 @@ module.exports = class Connection {
 
   getALl() {
     return new Promise((resolve, reject) => {
-      if (TODOS) {
+      if (TODOS.length) {
         resolve(TODOS);
         return;
       }

@@ -46,10 +46,12 @@ router.route('/todos/:id')
       res.json({ error: 1, msg: 'Add error' })
     })
   })
-  .post((req, res) => {
-    const id = req.params.id;
-
-
+  .get((req, res) => {
+    res.json({
+      id: 123,
+      name: 'duyet',
+      age: 26
+    })
   })
 
 app.use('/api', router);
